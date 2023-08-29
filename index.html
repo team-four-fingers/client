@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>four-fingers</title>
+    <meta name="theme-color" content="#FEFFFE" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1,
+    user-scalable=no, viewport-fit=cover"
+    />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>포핑거스</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then(registration => {
+            console.log('Service worker registration succeeded:', registration)
+          })
+          .catch(err => {
+            console.log('Service worker registration failed:', error)
+          })
+      } else {
+        console.log('Service workers are not supported.')
+      }
+    </script>
   </body>
 </html>

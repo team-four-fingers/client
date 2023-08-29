@@ -1,0 +1,22 @@
+{
+  "name": "포핑거스",
+  "short_name": "포핑거스",
+  "start_url": "https://kakao-market-nemo.vercel.app/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "description": "포핑거스 설명",
+  "scope": "/",
+  "dir": "auto",
+  "categories": [],
+  "screenshots": [],
+  "shortcuts": [],
+  "icons": [
+    {
+      "src": "icon_512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    }
+  ]
+}
