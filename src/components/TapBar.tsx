@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom'
 import Icon, { IconNameType } from './Icon'
-import styles from './Tapbar.module.scss'
+
+import styles from './TapBar.module.scss'
 
 export default function TapBar() {
   type TapBarItem = {
