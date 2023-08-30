@@ -1,18 +1,51 @@
+import { useEffect, useState } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 
 import TapBar from '../components/TapBar'
 
 export default function Search() {
+  const [center, setCenter] = useState({ lat: 33.5563, lng: 126.79581 })
+
+  useEffect(() => {
+    ;(async () => {
+      const location = await getMyGps()
+      setCenter({ lat: location.lat, lng: location.lon })
+    })()
+  }, [])
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <SearchBar value='' />
-      <Map
-        center={{ lat: 33.5563, lng: 126.79581 }}
-        style={{ width: '100%', height: '100%' }}
-      ></Map>
+      <Map center={center} style={{ width: '100%', height: '100%' }}></Map>
       <TapBar />
     </div>
   )
+}
+
+const getMyGps = (): Promise<{ lat: number; lon: number }> => {
+  const gpsOptions = {
+    enableHighAccuracy: true,
+    timeout: 5000,
+  }
+
+  return new Promise(resolve => {
+    if (!navigator.geolocation) {
+      resolve({ lat: 33.450701, lon: 126.570667 })
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const lat = position.coords.latitude // 위도
+        const lon = position.coords.longitude // 경도
+
+        resolve({ lat: lat, lon: lon })
+      },
+      () => {
+        resolve({ lat: 33.450701, lon: 126.570667 })
+      },
+      gpsOptions,
+    )
+  })
 }
 
 // TODO: css 분리, 컴포넌트 이동
