@@ -6,6 +6,11 @@
   padding: 0 12px;
   border-top: 1px solid C.$gray750;
   display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  background-color: C.$white;
 }
 
 .item {
