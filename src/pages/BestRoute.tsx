@@ -1,22 +1,107 @@
-import { useRecoilState } from 'recoil'
+import { Map, MapMarker, Polyline } from 'react-kakao-maps-sdk'
+import { useRecoilValue } from 'recoil'
 import { cartItemsState } from '../recoil/cart-items'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
+
+import { useQuery } from 'react-query'
 
 export default function BestRoute() {
-  const [cartItems, setCartItems] = useRecoilState(cartItemsState)
+  const [map, setMap] = useState<kakao.maps.Map>()
+  const cartItems = useRecoilValue(cartItemsState)
 
-  useEffect(() => {
-    ;(async () => {
-      const response = await mockRouteApi({
+  const { data } = useQuery(
+    // TODO: api key 수정
+    ['bestRoute'],
+    async () =>
+      await routeApi({
         origin: MOCK_ORIGIN,
         destination: MOCK_DESTINATION,
         waypoints: cartItems.items.map(item => item.store),
-      })
-      console.log(response)
-    })()
-  }, [cartItems])
+      }),
+  )
 
-  return <div>BestRoute</div>
+  useEffect(() => {
+    const extendBounds = () => {
+      if (data === undefined || map === undefined) {
+        return
+      }
+
+      const bounds = new kakao.maps.LatLngBounds()
+
+      const { CoordinatesInOrder, Origin, Destination } = data.data
+
+      CoordinatesInOrder.forEach(item => {
+        bounds.extend(new kakao.maps.LatLng(Number(item.y), Number(item.x)))
+      })
+
+      bounds.extend(new kakao.maps.LatLng(Origin.y, Origin.x))
+      bounds.extend(new kakao.maps.LatLng(Destination.y, Destination.x))
+
+      map.setBounds(bounds)
+    }
+
+    extendBounds()
+  }, [data, map])
+
+  if (!data) {
+    return <div>loading...</div>
+  }
+
+  const { CoordinatesInOrder, Origin, Destination, Waypoints } = data.data
+
+  const coordinatesInOrder = CoordinatesInOrder.map(item => ({
+    lat: item.y,
+    lng: item.x,
+  }))
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <Map
+        center={{ lat: Origin.y, lng: Origin.x }}
+        onCreate={setMap}
+        level={3}
+        style={{ width: '100%', height: '100%' }}
+      >
+        // TODO: 컴포넌트 분리
+        <Polyline
+          path={[coordinatesInOrder]}
+          strokeWeight={15}
+          strokeColor={'#5C759D'}
+          strokeOpacity={1}
+          strokeStyle={'solid'}
+        />
+        <Polyline
+          path={[coordinatesInOrder]}
+          strokeWeight={13}
+          strokeColor={'#84A7E2'}
+          strokeOpacity={1}
+          strokeStyle={'solid'}
+        />
+        <Polyline
+          path={[coordinatesInOrder]}
+          strokeWeight={2}
+          strokeColor={'#FFFFFF'}
+          strokeOpacity={1}
+          strokeStyle={'shortdash'}
+        />
+        // TODO: 출발 마커로 변경
+        <MapMarker
+          key={`${Origin.y},${Origin.x}`}
+          position={{ lat: Origin.y, lng: Origin.x }}
+        ></MapMarker>
+        // TODO: 도착 마커로 변경
+        <MapMarker
+          key={`${Destination.y},${Destination.x}`}
+          position={{ lat: Destination.y, lng: Destination.x }}
+        ></MapMarker>
+        // TODO: 경유지 마커로 변경
+        {Waypoints.map(({ x, y }) => (
+          <MapMarker key={`${y},${x}`} position={{ lat: y, lng: x }}></MapMarker>
+        ))}
+      </Map>
+    </div>
+  )
 }
 
 const MOCK_ORIGIN = {
@@ -45,276 +130,21 @@ const MOCK_REQUEST = {
   waypoints: [MOCK_STORE1],
 }
 
-const MOCK_RESPONSE = {
-  origin: MOCK_ORIGIN,
-  destination: MOCK_DESTINATION,
-  waypoints: [MOCK_STORE1],
-  coordinates_in_order: [
-    {
-      x: 126.94645738299782,
-      y: 37.540648597491284,
-    },
-    {
-      x: 126.94653569519582,
-      y: 37.54071236917905,
-    },
-    {
-      x: 126.94653569519582,
-      y: 37.54071236917905,
-    },
-    {
-      x: 126.94689011122018,
-      y: 37.54045422807421,
-    },
-    {
-      x: 126.94689011122018,
-      y: 37.54045422807421,
-    },
-    {
-      x: 126.9462178533875,
-      y: 37.53997968834302,
-    },
-    {
-      x: 126.94533317532066,
-      y: 37.539323039149224,
-    },
-    {
-      x: 126.9450757454925,
-      y: 37.539122510164596,
-    },
-    {
-      x: 126.94489624519147,
-      y: 37.539012781266834,
-    },
-    {
-      x: 126.94471725331348,
-      y: 37.53886701491795,
-    },
-    {
-      x: 126.9444824545317,
-      y: 37.538666686888234,
-    },
-    {
-      x: 126.94422502924127,
-      y: 37.53846615609569,
-    },
-    {
-      x: 126.9434846691338,
-      y: 37.53800901281748,
-    },
-    {
-      x: 126.94248575621307,
-      y: 37.53743241413595,
-    },
-    {
-      x: 126.94065691518657,
-      y: 37.53633477018781,
-    },
-    {
-      x: 126.93056313229121,
-      y: 37.53005362446494,
-    },
-    {
-      x: 126.92930810284975,
-      y: 37.52920428221219,
-    },
-    {
-      x: 126.92618073935613,
-      y: 37.52716656044489,
-    },
-    {
-      x: 126.92618073935613,
-      y: 37.52716656044489,
-    },
-    {
-      x: 126.92616663902785,
-      y: 37.526571743557135,
-    },
-    {
-      x: 126.9263506012221,
-      y: 37.52636617613021,
-    },
-    {
-      x: 126.92638505367019,
-      y: 37.5263304475975,
-    },
-    {
-      x: 126.92669538237965,
-      y: 37.52599087179203,
-    },
-    {
-      x: 126.92681017959238,
-      y: 37.52587477936874,
-    },
-    {
-      x: 126.92740781589528,
-      y: 37.5252224468054,
-    },
-    {
-      x: 126.92803886124038,
-      y: 37.52460645608779,
-    },
-    {
-      x: 126.92814156911192,
-      y: 37.524544315221185,
-    },
-    {
-      x: 126.92814156911192,
-      y: 37.524544315221185,
-    },
-    {
-      x: 126.92835481641949,
-      y: 37.52466338614908,
-    },
-    {
-      x: 126.92830789400247,
-      y: 37.52478009607315,
-    },
-    {
-      x: 126.92704424577205,
-      y: 37.5261201879427,
-    },
-    {
-      x: 126.92668815371744,
-      y: 37.52649539050219,
-    },
-    {
-      x: 126.92660767870801,
-      y: 37.52658476344289,
-    },
-    {
-      x: 126.92660767870801,
-      y: 37.52658476344289,
-    },
-    {
-      x: 126.92658415097829,
-      y: 37.52664762264244,
-    },
-    {
-      x: 126.9265832472903,
-      y: 37.52671068747428,
-    },
-    {
-      x: 126.92658234359953,
-      y: 37.52677375230543,
-    },
-    {
-      x: 126.9266039349301,
-      y: 37.52684603203225,
-    },
-    {
-      x: 126.92775888985206,
-      y: 37.527568348258484,
-    },
-    {
-      x: 126.92781480595625,
-      y: 37.527613908101785,
-    },
-    {
-      x: 126.92781480595625,
-      y: 37.527613908101785,
-    },
-    {
-      x: 126.92784861355264,
-      y: 37.52762322546749,
-    },
-    {
-      x: 126.92790504552839,
-      y: 37.52763274821296,
-    },
-    {
-      x: 126.9279276698993,
-      y: 37.52763295359797,
-    },
-    {
-      x: 126.92799592981201,
-      y: 37.52760654193381,
-    },
-    {
-      x: 126.92855782979024,
-      y: 37.52708002546751,
-    },
-    {
-      x: 126.92855782979024,
-      y: 37.52708002546751,
-    },
-    {
-      x: 126.92744786436701,
-      y: 37.52637614646941,
-    },
-  ],
-  duration_in_minutes: 32,
-  distance_in_km: 10,
-  eta: '',
-  comparison: {
-    saved_time_in_minutes: 0,
-    saved_gas_cost: 0,
-    control: {
-      duration_in_minutes: 0,
-      distance_in_km: 0,
-      gas_cost: 0,
-      route: {
-        origin: {
-          x: 0,
-          y: 0,
-        },
-        destination: {
-          x: 0,
-          y: 0,
-        },
-        waypoints: [
-          {
-            coordinate: {
-              x: 0,
-              y: 0,
-            },
-            name: '',
-            image_url: '',
-            operation_hours: '',
-            has_parking_lot: true,
-            distance_from_origin: 0,
-          },
-        ],
-      },
-    },
-    treatment: {
-      duration_in_minutes: 0,
-      distance_in_km: 0,
-      gas_cost: 0,
-      routes: [
-        {
-          origin: {
-            x: 0,
-            y: 0,
-          },
-          destination: {
-            x: 0,
-            y: 0,
-          },
-          waypoints: [
-            {
-              coordinate: {
-                x: 0,
-                y: 0,
-              },
-              name: '',
-              image_url: '',
-              operation_hours: '',
-              has_parking_lot: true,
-              distance_from_origin: 0,
-            },
-          ],
-        },
-      ],
-    },
-  },
+//TODO: api 폴더로 이동
+const routeApi = (request: typeof MOCK_REQUEST) => {
+  return axios.post<TempType>(`${API_BASE_URL}/routes`, request)
 }
 
-const mockRouteApi = (request: typeof MOCK_REQUEST) => {
-  console.log(request)
-  return new Promise(resolve => {
-    setTimeout(() => {
-      resolve(MOCK_RESPONSE)
-    }, 1000)
-  })
+const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
+
+interface TempType {
+  Origin: Coordinate
+  Destination: Coordinate
+  Waypoints: Coordinate[]
+  CoordinatesInOrder: Coordinate[]
+}
+
+interface Coordinate {
+  x: number
+  y: number
 }
