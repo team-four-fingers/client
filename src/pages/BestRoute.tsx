@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 
 import { useQuery } from 'react-query'
+import BasicMarker from '../components/Marker/BasicMarker'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
@@ -98,16 +99,16 @@ export default function BestRoute() {
           strokeOpacity={1}
           strokeStyle={'shortdash'}
         />
-        // TODO: 출발 마커로 변경
-        <MapMarker
+        <BasicMarker
           key={`${Origin.y},${Origin.x}`}
           position={{ lat: Origin.y, lng: Origin.x }}
-        ></MapMarker>
-        // TODO: 도착 마커로 변경
-        <MapMarker
+          type='depart'
+        />
+        <BasicMarker
           key={`${Destination.y},${Destination.x}`}
           position={{ lat: Destination.y, lng: Destination.x }}
-        ></MapMarker>
+          type='arrival'
+        />
         // TODO: 경유지 마커로 변경
         {Waypoints.map(({ x, y }) => (
           <MapMarker key={`${y},${x}`} position={{ lat: y, lng: x }}></MapMarker>
