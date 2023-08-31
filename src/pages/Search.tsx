@@ -75,7 +75,7 @@ export default function Search() {
 
     return new Promise(resolve => {
       if (!navigator.geolocation) {
-        resolve({ lat: 33.450701, lng: 126.570667 })
+        resolve({ lat: 37.3941037, lng: 127.1100201 })
       }
 
       navigator.geolocation.getCurrentPosition(
@@ -86,7 +86,7 @@ export default function Search() {
           resolve({ lat: lat, lng: lng })
         },
         () => {
-          resolve({ lat: 33.450701, lng: 126.570667 })
+          resolve({ lat: 37.3941037, lng: 127.1100201 })
         },
         gpsOptions,
       )
