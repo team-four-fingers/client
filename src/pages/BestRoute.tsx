@@ -99,6 +99,36 @@ export default function BestRoute() {
 
   const waypointNames = ['출발', ...waypoints.map(point => point.name), '도착']
 
+  const openKakaonavi = () => {
+    const waypoint = waypoints.slice(0, 3).map(point => ({
+      name: point.name,
+      x: point.coordinate.x,
+      y: point.coordinate.y,
+    }))
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    Kakao.Navi.start({
+      // 시작좌표
+      sX: origin.x,
+      sY: origin.y,
+
+      // 도착지
+      name: '마포구 일진빌딩',
+      x: destination.x,
+      y: destination.y,
+
+      // 좌표 타입
+      coordType: 'wgs84',
+
+      // 전체 경로 보기 여부
+      routeInfo: true,
+
+      // 경유지 정보, 최대 3개
+      viaPoints: waypoint,
+    })
+  }
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <BestRouteWaypointsBar waypointNames={waypointNames} />
@@ -131,6 +161,7 @@ export default function BestRoute() {
         itemsCount={itemsCount}
         searchResultItems={selectedSearchResultItems}
         comparison={data.data.comparison}
+        openKakaonavi={openKakaonavi}
       />
     </div>
   )
@@ -142,12 +173,14 @@ const BestRouteModal = ({
   itemsCount,
   searchResultItems,
   comparison,
+  openKakaonavi,
 }: {
   duration_in_minutes: number
   distance_in_meters: number
   itemsCount: number
   searchResultItems: SearchResultItem[]
   comparison: RoutesComparison
+  openKakaonavi: () => void
 }) => {
   const navigate = useNavigate()
 
@@ -302,6 +335,7 @@ const BestRouteModal = ({
             fontWeight: 700,
             flexShrink: 0,
           }}
+          onClick={openKakaonavi}
         >
           바로 길 안내
         </button>
