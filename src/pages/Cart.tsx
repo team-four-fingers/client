@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { useSearchResultItemsCart } from '../recoil/search-result-items'
 
 export default function Cart() {
+  const navigate = useNavigate()
+
   const {
     searchResultItemsInCart,
     selectSearchResultItemFromCart,
@@ -120,6 +123,34 @@ export default function Cart() {
                   {item.product.name}
                 </span>
               </div>
+            </div>
+
+            <div
+              style={{
+                padding: '20px',
+                width: '100%',
+                position: 'fixed',
+                bottom: 0,
+              }}
+            >
+              <button
+                type='button'
+                style={{
+                  padding: '20px 24px',
+                  width: '100%',
+                  borderRadius: '12px',
+                  background: 'var(--blue-100, #4A88E5)',
+                  color: 'var(--white-900, #FFF)',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                }}
+                onClick={() => {
+                  navigate('/bestRoute')
+                }}
+              >
+                선택한 {searchResultItemsInCart.filter(item => item.isSelected).length}개 상품
+                사러가는 길 찾기
+              </button>
             </div>
           </>
         )
