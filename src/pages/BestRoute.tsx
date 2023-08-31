@@ -10,13 +10,17 @@ import { format } from 'date-fns'
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
-import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi, ApiPath } from '../api'
+import { routeApi, ApiPath } from '../api'
 import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
 import { searchResultItemCartState } from '../recoil/search-result-items'
 import { SearchResultItem } from './Search'
+import { destinationState, originState } from '../recoil/location'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
+
+  const recoilOrigin = useRecoilValue(originState)
+  const recoilDestination = useRecoilValue(destinationState)
 
   const selectedSearchResultItems = useRecoilValue(searchResultItemCartState).filter(
     item => item.isSelected,
@@ -27,8 +31,8 @@ export default function BestRoute() {
     [ApiPath.routes],
     async () =>
       await routeApi({
-        origin: MOCK_ORIGIN,
-        destination: MOCK_DESTINATION,
+        origin: recoilOrigin,
+        destination: recoilDestination,
         waypoints: selectedSearchResultItems.map(item => {
           return {
             ...item.store,

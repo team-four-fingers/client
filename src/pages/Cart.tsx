@@ -175,7 +175,7 @@ const CheckBox = ({
 }) => {
   return (
     <img
-      src={isChecked ? '/public/check-on.png' : '/public/check-off.png'}
+      src={isChecked ? '/check-on.png' : '/check-off.png'}
       width={size}
       height={size}
       onClick={onClick}
