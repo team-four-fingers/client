@@ -1,0 +1,26 @@
+@use '../styles/color' as C;
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: calc(100% - 24px);
+  height: 72px;
+  padding: 16px 20px;
+  border: 1px solid C.$blue400;
+  background-color: C.$blue200;
+  border-radius: 16px;
+  color: C.$white;
+  position: absolute;
+  bottom: 96px;
+  left: 12px;
+  z-index: 10;
+}
+
+.desc {
+  font-size: 14px;
+  font-weight: bold;
+  span {
+    color: C.$yellow100;
+  }
+}
