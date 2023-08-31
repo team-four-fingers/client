@@ -4,12 +4,12 @@ import markerCurrentUrl from '../../assets/pin_normal-small.svg'
 import markerDepartUrl from '../../assets/pin_depart.svg'
 import markerArrivalUrl from '../../assets/pin_arrival.svg'
 
-type MarkerType = {
+type BasicMarkerProps = {
   position: { lat: number; lng: number }
   type: 'current' | 'depart' | 'arrival' // 내위치, 출발, 도착
 }
 
-export function BasicMarker({ position, type }: MarkerType) {
+export default function BasicMarker({ position, type }: BasicMarkerProps) {
   const markerPosition = { lat: position.lat, lng: position.lng }
   const markerSrc = {
     current: markerCurrentUrl,
