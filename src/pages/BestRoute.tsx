@@ -14,7 +14,7 @@ export default function BestRoute() {
   const cartItems = useRecoilValue(cartItemsState)
 
   const { data } = useQuery(
-    [ApiPath.mockRoutes],
+    [ApiPath.routes],
     async () =>
       await routeApi({
         origin: MOCK_ORIGIN,
@@ -31,14 +31,14 @@ export default function BestRoute() {
 
       const bounds = new kakao.maps.LatLngBounds()
 
-      const { CoordinatesInOrder, Origin, Destination } = data.data
+      const { coordinates_in_order, origin, destination } = data.data
 
-      CoordinatesInOrder.forEach(item => {
+      coordinates_in_order.forEach(item => {
         bounds.extend(new kakao.maps.LatLng(Number(item.y), Number(item.x)))
       })
 
-      bounds.extend(new kakao.maps.LatLng(Origin.y, Origin.x))
-      bounds.extend(new kakao.maps.LatLng(Destination.y, Destination.x))
+      bounds.extend(new kakao.maps.LatLng(origin.y, origin.x))
+      bounds.extend(new kakao.maps.LatLng(destination.y, destination.x))
 
       map.setBounds(bounds)
     }
@@ -63,9 +63,9 @@ export default function BestRoute() {
     )
   }
 
-  const { CoordinatesInOrder, Origin, Destination, Waypoints } = data.data
+  const { coordinates_in_order, origin, destination, waypoints } = data.data
 
-  const coordinatesInOrder = CoordinatesInOrder.map(item => ({
+  const coordinatesInOrder = coordinates_in_order.map(item => ({
     lat: item.y,
     lng: item.x,
   }))
@@ -77,27 +77,42 @@ export default function BestRoute() {
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <BestRouteWaypointsBar waypointNames={waypointNames} />
       <Map
-        center={{ lat: Origin.y, lng: Origin.x }}
+        center={{ lat: origin.y, lng: origin.x }}
         onCreate={setMap}
         level={3}
         style={{ width: '100%', height: '100%' }}
       >
         <RoadLine path={coordinatesInOrder} />
         <BasicMarker
-          key={`${Origin.y},${Origin.x}`}
-          position={{ lat: Origin.y, lng: Origin.x }}
+          key={`${origin.y},${origin.x}`}
+          position={{ lat: origin.y, lng: origin.x }}
           type='depart'
         />
         <BasicMarker
-          key={`${Destination.y},${Destination.x}`}
-          position={{ lat: Destination.y, lng: Destination.x }}
+          key={`${destination.y},${destination.x}`}
+          position={{ lat: destination.y, lng: destination.x }}
           type='arrival'
         />
         // TODO: 경유지 마커로 변경
-        {Waypoints.map(({ x, y }) => (
+        {waypoints.map(({ coordinate: { x, y } }) => (
           <MapMarker key={`${y},${x}`} position={{ lat: y, lng: x }}></MapMarker>
         ))}
       </Map>
+
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '100%',
+          backgroundColor: 'white',
+          borderRadius: '16px 16px 0 0',
+          zIndex: 10,
+          padding: '20px',
+        }}
+      >
+        모달모달
+      </div>
     </div>
   )
 }
