@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { MOCK_DESTINATION, MOCK_ORIGIN } from '../recoil/location'
 
 const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
 
@@ -52,25 +53,9 @@ interface Waypoint {
   distance_from_origin: number
 }
 
-interface Coordinate {
+export interface Coordinate {
   x: number
   y: number
-}
-
-// interface TempType {
-//   Origin: Coordinate
-//   Destination: Coordinate
-//   Waypoints: Coordinate[]
-//   CoordinatesInOrder: Coordinate[]
-// }
-
-export const MOCK_ORIGIN = {
-  x: 126.946362033068,
-  y: 37.5404741779088,
-}
-export const MOCK_DESTINATION = {
-  x: 127.1101250888609,
-  y: 37.39407843730005,
 }
 
 export const MOCK_STORE1 = {

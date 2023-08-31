@@ -6,6 +6,8 @@ import TapBar from '../components/TapBar'
 import BasicMarker from '../components/Marker/BasicMarker'
 import Icon from '../components/Icon'
 import { useNavigate } from 'react-router-dom'
+import { useSetRecoilState } from 'recoil'
+import { originState } from '../recoil/location'
 
 type requestType = {
   query: string
@@ -44,12 +46,17 @@ export interface SearchResultItem {
     image_url: string
   }
   store: {
-    coordinate: { lat: number; lng: number }
+    coordinate: LatLng
     name: string
     operation_hours: string
     has_parking_lot: boolean
     distance_from_origin: number
   }
+}
+
+export interface LatLng {
+  lat: number
+  lng: number
 }
 
 export interface SearchResultList {
@@ -60,14 +67,17 @@ export default function Search() {
   const [center, setCenter] = useState({ lat: 37.3941037, lng: 127.1100201 })
   const navigate = useNavigate()
 
+  const setOriginState = useSetRecoilState(originState)
+
   useEffect(() => {
     ;(async () => {
       const location = await getMyGps()
-      setCenter({ lat: location.lat, lng: location.lng })
+      setCenter(location)
+      setOriginState({ y: location.lat, x: location.lng })
     })()
-  }, [])
+  }, [setOriginState])
 
-  const getMyGps = (): Promise<{ lat: number; lng: number }> => {
+  const getMyGps = (): Promise<LatLng> => {
     const gpsOptions = {
       enableHighAccuracy: true,
       timeout: 5000,
