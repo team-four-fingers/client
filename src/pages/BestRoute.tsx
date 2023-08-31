@@ -45,7 +45,20 @@ export default function BestRoute() {
   }, [data, map])
 
   if (!data) {
-    return <div>loading...</div>
+    return (
+      //TODO: 로딩중 화면 교체
+      <div
+        style={{
+          display: 'flex',
+          width: '100%',
+          height: '100%',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        loading...
+      </div>
+    )
   }
 
   const { CoordinatesInOrder, Origin, Destination, Waypoints } = data.data

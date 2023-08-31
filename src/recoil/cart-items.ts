@@ -9,20 +9,10 @@ interface CartItem {
   products: Product[]
 }
 
-// interface Store {
-//   location: Location
-//   name: string
-// }
-
 interface Product {
   name: string
   price: number
 }
-
-// interface Location {
-//   lat: number
-//   lng: number
-// }
 
 interface StoreInfo {
   coordinate: Coordinate
