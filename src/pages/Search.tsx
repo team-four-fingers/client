@@ -270,22 +270,7 @@ const SearchBar = ({
               backgroundColor: 'white',
               padding: '24px 20px',
             }}
-          >
-            <div>언제 필요한가요?</div>
-            <ul>
-              <li>직접조리</li>
-              <li>픽업</li>
-              <li>매장식사</li>
-              <li>재료민</li>
-            </ul>
-            <div>어떤 방식을 선호하나요?</div>
-            <ul>
-              <li>직접조리</li>
-              <li>픽업</li>
-              <li>매장식사</li>
-              <li>재료민</li>
-            </ul>
-          </div>
+          ></div>
         </div>
       )}
     </>
