@@ -26,7 +26,12 @@ export default function Cart() {
           padding: '10px',
         }}
       >
-        <div style={{ position: 'absolute', left: 0 }}>
+        <div
+          style={{ position: 'absolute', left: 0 }}
+          onClick={() => {
+            navigate(-1)
+          }}
+        >
           <Icon name='icon-back' size={24} />
         </div>
         장바구니
