@@ -87,8 +87,7 @@ export default function BestRoute() {
     lng: item.x,
   }))
 
-  // TODO: 데이터 사용
-  const waypointNames = ['출발', '1경유', '도착']
+  const waypointNames = ['출발', ...waypoints.map(point => point.name), '도착']
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
