@@ -20,6 +20,7 @@ export const BestRouteWaypointsBar = ({ waypointNames }: { waypointNames: string
           width: '100%',
           display: 'flex',
           gap: '10px',
+          overflow: 'hidden',
         }}
       >
         <Icon name='icon-back' size={24} />
