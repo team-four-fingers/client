@@ -108,9 +108,9 @@ export default function Search() {
         x: center.lng,
         y: center.lat,
       },
-      radius: 0,
+      radius: 10000,
       when_type: '아침',
-      eat_type: '',
+      eat_type: '매장식사',
     }
     const data = await getResultByKeyword(request)
 
