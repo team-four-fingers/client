@@ -39,7 +39,7 @@ export default function ProductDetailModal({ data }: ProductDetailModalProps) {
           ・내 위치에서{' '}
           {store.distance_from_origin < 1000
             ? `${store.distance_from_origin}m`
-            : `${store.distance_from_origin * 0.001}km`}
+            : `${(store.distance_from_origin * 0.001).toFixed(2)}km`}
         </p>
         <p>・운영시간: {store.operation_hours}</p>
         <p>・주차장 {store.has_parking_lot ? '보유' : '없음'}</p>
