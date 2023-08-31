@@ -25,7 +25,7 @@ export default function SearchResultHeader({ keyword, count }: SearchResultHeade
       </div>
       <div className={styles.right}>
         <button className={styles.button} type='button' onClick={handleCartClick}>
-          <Icon name='icon-bookmark-solid' />
+          <Icon name='icon-cart-solid' />
         </button>
       </div>
     </div>
