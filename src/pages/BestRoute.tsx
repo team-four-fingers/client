@@ -110,13 +110,13 @@ export default function BestRoute() {
     //@ts-ignore
     Kakao.Navi.start({
       // 시작좌표
-      sX: origin.x,
-      sY: origin.y,
+      sX: destination.x,
+      sY: destination.y,
 
       // 도착지
       name: '마포구 일진빌딩',
-      x: destination.x,
-      y: destination.y,
+      x: origin.x,
+      y: origin.y,
 
       // 좌표 타입
       coordType: 'wgs84',
