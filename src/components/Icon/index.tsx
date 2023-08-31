@@ -3,6 +3,7 @@ import sprite from './sprite.svg'
 export type IconNameType =
   | 'icon-arrow_down'
   | 'icon-arrow_right'
+  | 'icon-arrow_right-gray400'
   | 'icon-arrow_up'
   | 'icon-back'
   | 'icon-bookmark-line'

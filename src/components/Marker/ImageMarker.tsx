@@ -19,6 +19,7 @@ const backgroundMarker = {
 export default function ImageMarker({ position, color, imageUrl, handleClick }: ImageMarkerType) {
   const imagePosition = { lat: position.lat, lng: position.lng }
   const imageSize = color === 'gray' ? { width: 38, height: 50 } : { width: 38, height: 72 }
+
   const imageInfo = { src: imageUrl, size: imageSize }
 
   return (
