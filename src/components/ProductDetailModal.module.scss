@@ -1,0 +1,79 @@
+@use '../styles/color' as C;
+
+.container {
+  position: fixed;
+  bottom: 0;
+  z-index: 1000;
+  width: 100%;
+  max-width: 640px;
+  padding: 36px 20px 20px;
+  background-color: C.$white;
+  border-radius: 16px 16px 0 0;
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  background-color: C.$gray750;
+  color: C.$gray400;
+  font-weight: 500;
+  font-size: 1.3rem;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.productBox {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.productImg {
+  width: 52px;
+  height: 52px;
+  border-radius: 52px;
+  border: 1px solid C.$gray700;
+  overflow: hidden;
+  img {
+    margin-top: -8px;
+    width: 52px;
+  }
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: bold;
+}
+
+.store {
+  display: flex;
+  align-items: center;
+  margin: 4px 0 8px;
+  font-size: 1.6rem;
+  font-weight: 500;
+  color: C.$gray400;
+}
+
+.price {
+  font-size: 2rem;
+}
+
+.desc {
+  margin: 16px 0 24px;
+  font-size: 1.6rem;
+  line-height: 1.7;
+  color: C.$gray200;
+}
+
+.btn {
+  width: 100%;
+  height: 59px;
+  background-color: C.$blue100;
+  font-weight: bold;
+  color: C.$white;
+  border-radius: 16px;
+}
