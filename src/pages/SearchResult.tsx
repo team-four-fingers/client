@@ -6,7 +6,7 @@ import ProductDetailModal from '../components/ProductDetailModal'
 import { useLocation } from 'react-router-dom'
 import { SearchResultItem } from './Search'
 import SearchResultHeader from '../components/SearchResultHeader'
-import productUrl from '../assets/product_sample.png'
+import { mockC, mockSq } from '../assets/mock'
 
 type Marker = {
   id: number
@@ -25,6 +25,10 @@ export default function SearchResult() {
 
   const resultListWithId = resultList.map((result: SearchResultItem, index: number) => ({
     ...result,
+    product: {
+      ...result.product,
+      image_url: mockSq[index + 1],
+    },
     result_id: index + 1,
   }))
 
@@ -81,7 +85,7 @@ export default function SearchResult() {
             key={id}
             position={position}
             color={focus ? 'blue' : 'gray'}
-            thumbnailUrl={productUrl}
+            thumbnailUrl={mockC[id]}
             handleClick={handleClick}
           />
         ))}
