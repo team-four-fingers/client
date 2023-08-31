@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
 
-const ApiPath = { routes: '/routes' } as const
+export const ApiPath = { routes: '/routes' } as const
 
 // TODO: 파일 분리
 export const routeApi = (request: typeof MOCK_REQUEST) => {
