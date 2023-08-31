@@ -12,9 +12,9 @@ export default function TapBar() {
   }
 
   const tapBarItems: TapBarItem[] = [
-    { name: '탐색', icon: 'icon_check', path: '/', active: true },
-    { name: '장바구니', icon: 'icon_check', path: '/cart', active: false },
-    { name: '저장 경로', icon: 'icon_check', path: '/savedRoutes', active: false },
+    { name: '탐색', icon: 'icon-search-solid', path: '/', active: true },
+    { name: '장바구니', icon: 'icon-cart-line', path: '/cart', active: false },
+    { name: '저장 경로', icon: 'icon-bookmark-line', path: '/savedRoutes', active: false },
   ]
 
   return (
