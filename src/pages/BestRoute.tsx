@@ -10,11 +10,12 @@ import { format } from 'date-fns'
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
-import { routeApi, ApiPath } from '../api'
+import { routeApi, ApiPath, RoutesComparison } from '../api'
 import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
 import { searchResultItemCartState } from '../recoil/search-result-items'
 import { SearchResultItem } from './Search'
 import { destinationState, originState } from '../recoil/location'
+import { useNavigate } from 'react-router-dom'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
@@ -129,6 +130,7 @@ export default function BestRoute() {
         distance_in_meters={distance_in_meters}
         itemsCount={itemsCount}
         searchResultItems={selectedSearchResultItems}
+        comparison={data.data.comparison}
       />
     </div>
   )
@@ -139,12 +141,16 @@ const BestRouteModal = ({
   distance_in_meters,
   itemsCount,
   searchResultItems,
+  comparison,
 }: {
   duration_in_minutes: number
   distance_in_meters: number
   itemsCount: number
   searchResultItems: SearchResultItem[]
+  comparison: RoutesComparison
 }) => {
+  const navigate = useNavigate()
+
   return (
     <div
       style={{
@@ -164,7 +170,8 @@ const BestRouteModal = ({
         <div style={{ color: 'var(--gray-050, #111)', fontSize: '18px', fontWeight: 700 }}>
           추천 경로
         </div>
-        <div
+        <button
+          type='button'
           style={{
             padding: '6px',
             borderRadius: '6px',
@@ -172,9 +179,12 @@ const BestRouteModal = ({
             color: 'var(--gray-400, #878E9C)',
             fontSize: '13px',
           }}
+          onClick={() => {
+            navigate('/bestRoute/comparison', { state: { comparison } })
+          }}
         >
           자세히 보기
-        </div>
+        </button>
       </div>
       <div style={{ height: '8px' }} />
       <div

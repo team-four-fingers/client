@@ -23,31 +23,36 @@ interface RoutesResponse {
   coordinates_in_order: Coordinate[]
   duration_in_minutes: number
   distance_in_meters: number
-  comparison: {
-    saved_time_in_minutes: number
-    saved_gas_cost: number
-    control: {
-      duration_in_minutes: number
-      distance_in_km: number
-      gas_cost: number
-      route: {
-        origin: Coordinate
-        destination: Coordinate
-        waypoints: null
-      }
-    }
-    treatment: {
-      duration_in_minutes: number
-      distance_in_meters: number
-      gas_cost: number
-      routes: null
-    }
+  comparison: RoutesComparison
+}
+
+export interface RoutesComparison {
+  saved_time_in_minutes: number
+  saved_gas_cost: number
+  control: {
+    distance_in_meters: number
+    duration_in_minutes: number
+    gas_cost: number
+    route: Route
   }
+  treatment: {
+    distance_in_meters: number
+    duration_in_minutes: number
+    gas_cost: number
+    routes: Route[]
+  }
+}
+
+export interface Route {
+  origin: Coordinate
+  destination: Coordinate
+  waypoints: Waypoint[]
 }
 
 interface Waypoint {
   coordinate: Coordinate
   name: string
+  // image_url: string
   operation_hours: string
   has_parking_lot: boolean
   distance_from_origin: number
