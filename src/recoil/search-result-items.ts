@@ -76,8 +76,50 @@ export const useSearchResultItemsCart = () => {
     setSearchResultItems(prev => [...prev, { ...searchResultItem, isSelected: true }])
   }
 
+  const selectSearchResultItemFromCart = (searchResultItem: SearchResultItem) => {
+    setSearchResultItems(prev =>
+      prev.map(item => {
+        if (item.result_id === searchResultItem.result_id) {
+          return { ...item, isSelected: true }
+        }
+        return item
+      }),
+    )
+  }
+
+  const unselectSearchResultItemFromCart = (searchResultItem: SearchResultItem) => {
+    setSearchResultItems(prev =>
+      prev.map(item => {
+        if (item.result_id === searchResultItem.result_id) {
+          return { ...item, isSelected: false }
+        }
+        return item
+      }),
+    )
+  }
+
+  const selectAllSearchResultItemsFromCart = () => {
+    setSearchResultItems(prev =>
+      prev.map(item => {
+        return { ...item, isSelected: true }
+      }),
+    )
+  }
+
+  const unselectAllSearchResultItemsFromCart = () => {
+    setSearchResultItems(prev =>
+      prev.map(item => {
+        return { ...item, isSelected: false }
+      }),
+    )
+  }
+
   return {
     addSearchResultItemToCart,
+    selectSearchResultItemFromCart,
+    unselectSearchResultItemFromCart,
+    selectAllSearchResultItemsFromCart,
+    unselectAllSearchResultItemsFromCart,
     searchResultItemsInCart: searchResultItems,
   }
 }

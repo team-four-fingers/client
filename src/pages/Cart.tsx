@@ -2,7 +2,15 @@ import Icon from '../components/Icon'
 import { useSearchResultItemsCart } from '../recoil/search-result-items'
 
 export default function Cart() {
-  const { searchResultItemsInCart } = useSearchResultItemsCart()
+  const {
+    searchResultItemsInCart,
+    selectSearchResultItemFromCart,
+    unselectSearchResultItemFromCart,
+    selectAllSearchResultItemsFromCart,
+    unselectAllSearchResultItemsFromCart,
+  } = useSearchResultItemsCart()
+
+  const isAllSelected = searchResultItemsInCart.every(item => item.isSelected)
 
   return (
     <>
@@ -35,7 +43,17 @@ export default function Cart() {
             alignItems: 'center',
           }}
         >
-          <CheckBox isChecked={searchResultItemsInCart.every(item => item.isSelected)} size={20} />
+          <CheckBox
+            isChecked={isAllSelected}
+            size={20}
+            onClick={() => {
+              if (isAllSelected) {
+                unselectAllSearchResultItemsFromCart()
+              } else {
+                selectAllSearchResultItemsFromCart()
+              }
+            }}
+          />
           전체 선택
         </div>
       </div>
@@ -64,7 +82,17 @@ export default function Cart() {
                 gap: '12px',
               }}
             >
-              <CheckBox isChecked={item.isSelected} size={20} />
+              <CheckBox
+                isChecked={item.isSelected}
+                size={20}
+                onClick={() => {
+                  if (item.isSelected) {
+                    unselectSearchResultItemFromCart(item)
+                  } else {
+                    selectSearchResultItemFromCart(item)
+                  }
+                }}
+              />
               <img src={item.product.image_url} width={80} height={80} />
               <div
                 style={{
@@ -100,12 +128,21 @@ export default function Cart() {
   )
 }
 
-const CheckBox = ({ isChecked, size }: { isChecked: boolean; size: number }) => {
+const CheckBox = ({
+  isChecked,
+  size,
+  onClick,
+}: {
+  isChecked: boolean
+  size: number
+  onClick?: () => void
+}) => {
   return (
     <img
       src={isChecked ? '/public/check-on.png' : '/public/check-off.png'}
       width={size}
       height={size}
+      onClick={onClick}
     />
   )
 }
