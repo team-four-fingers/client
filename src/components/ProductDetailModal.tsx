@@ -1,7 +1,7 @@
-// type ProductDetailModalProps = {}
 import Icon from './Icon'
 import styles from './ProductDetailModal.module.scss'
 import { SearchResultItem } from '../pages/Search'
+import { useSearchResultItemsCart } from '../recoil/search-result-items'
 
 type ProductDetailModalProps = {
   data: SearchResultItem
@@ -9,6 +9,8 @@ type ProductDetailModalProps = {
 
 export default function ProductDetailModal({ data }: ProductDetailModalProps) {
   const { product, store, when_types } = data
+
+  const { addSearchResultItemToCart } = useSearchResultItemsCart()
 
   return (
     <div className={styles.container}>
@@ -46,7 +48,7 @@ export default function ProductDetailModal({ data }: ProductDetailModalProps) {
         type='button'
         className={styles.btn}
         onClick={() => {
-          console.log('장바구니 담기')
+          addSearchResultItemToCart(data)
         }}
       >
         장바구니 담기
