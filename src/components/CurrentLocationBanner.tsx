@@ -1,5 +1,4 @@
 import Icon from './Icon'
-
 import styles from './CurrentLocationBanner.module.scss'
 
 export default function CurrentLocationBanner({ address }: { address: string }) {
