@@ -1,11 +1,23 @@
 import sprite from './sprite.svg'
 
 export type IconNameType =
-  | 'icon_arrowRight'
-  | 'icon_check'
-  | 'icon_minus'
-  | 'icon_plus'
-  | 'icon_spot'
+  | 'icon-arrow_down'
+  | 'icon-arrow_right'
+  | 'icon-arrow_up'
+  | 'icon-back'
+  | 'icon-bookmark-line'
+  | 'icon-bookmark-solid'
+  | 'icon-cart-line'
+  | 'icon-cart-solid'
+  | 'icon-check'
+  | 'icon-list'
+  | 'icon-map'
+  | 'icon-minus'
+  | 'icon-search-line'
+  | 'icon-plus'
+  | 'icon-search-solid'
+  | 'icon-spot'
+  | 'icon-spot-white'
 
 type IconType = {
   name: IconNameType
