@@ -183,7 +183,7 @@ const SearchBar = ({
         className='fakeSearchBar'
         style={{
           position: 'fixed',
-          top: '56px',
+          top: '12px',
           zIndex: 50,
           padding: '0 12px',
           width: '100%',
