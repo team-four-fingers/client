@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import Icon from '../components/Icon'
 import { useSearchResultItemsCart } from '../recoil/search-result-items'
+import TapBar from '../components/TapBar'
 
 export default function Cart() {
   const navigate = useNavigate()
@@ -139,14 +140,15 @@ export default function Cart() {
               style={{
                 padding: '20px',
                 width: '100%',
+                maxWidth: '640px',
                 position: 'fixed',
-                bottom: 0,
+                bottom: '84px',
               }}
             >
               <button
                 type='button'
                 style={{
-                  padding: '20px 24px',
+                  padding: '16px 24px',
                   width: '100%',
                   borderRadius: '12px',
                   background: 'var(--blue-100, #4A88E5)',
@@ -165,6 +167,8 @@ export default function Cart() {
           </>
         )
       })}
+      <div style={{ content: ' ', display: 'block', clear: 'both', height: '240px' }}></div>
+      <TapBar />
     </>
   )
 }
