@@ -1,6 +1,10 @@
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+
+import Slider from 'react-slick'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useRecoilValue } from 'recoil'
-import { cartItemsState } from '../recoil/cart-items'
+import { Product, cartItemsState } from '../recoil/cart-items'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 
@@ -13,7 +17,10 @@ import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
   const cartItems = useRecoilValue(cartItemsState)
-  const products = cartItems.items.flatMap(item => item.products)
+  const products: (Product & { storeName: string })[] = cartItems.items.flatMap(item => {
+    return item.products.map(product => ({ ...product, storeName: item.store.name }))
+  })
+
   const itemsCount = products.length
 
   const { data } = useQuery(
@@ -166,23 +173,67 @@ export default function BestRoute() {
           </div>
         </div>
         <div style={{ height: '8px' }} />
-        {/* // TODO: 상품 캐러샐 */}
-        <div style={{ display: 'flex', gap: '12px' }}>
+
+        <Slider
+          {...{
+            infinite: false,
+            slidesToShow: 1.3,
+            slidesToScroll: 1,
+          }}
+        >
           {products.map(product => {
             return (
-              <div
-                key={product.name}
-                style={{
-                  padding: '12px',
-                  borderRadius: '12px',
-                  border: '1px solid var(--gray-700, #E5E8ED)',
-                }}
-              >
-                {product.name}
+              <div key={product.name}>
+                <div
+                  style={{
+                    padding: '12px',
+                    borderRadius: '12px',
+                    border: '1px solid var(--gray-700, #E5E8ED)',
+                    marginRight: '12px',
+                    display: 'flex',
+                    gap: '16px',
+                  }}
+                >
+                  <img
+                    src='https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80'
+                    width={'60px'}
+                    height={'60px'}
+                    style={{ borderRadius: '10px' }}
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span
+                      style={{
+                        fontSize: '15px',
+                        fontWeight: 700,
+                        lineHeight: 'normal',
+                      }}
+                    >
+                      {product.storeName}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '14px',
+                        fontWeight: 400,
+                        lineHeight: 'normal',
+                      }}
+                    >
+                      {product.name}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        lineHeight: 'normal',
+                      }}
+                    >
+                      {product.price}
+                    </span>
+                  </div>
+                </div>
               </div>
             )
           })}
-        </div>
+        </Slider>
         <div style={{ height: '32px' }} />
         <div style={{ display: 'flex', gap: '10px' }}>
           <button

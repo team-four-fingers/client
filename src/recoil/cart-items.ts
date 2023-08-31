@@ -9,7 +9,7 @@ interface CartItem {
   products: Product[]
 }
 
-interface Product {
+export interface Product {
   name: string
   price: number
 }
@@ -41,7 +41,7 @@ const MOCK_CART_ITEMS: CartItems = {
       },
       products: [
         {
-          name: 'test',
+          name: 'te222d2222222st',
           price: 0,
         },
       ],
@@ -59,7 +59,7 @@ const MOCK_CART_ITEMS: CartItems = {
       },
       products: [
         {
-          name: 'test',
+          name: 'tdddsssdsdsdest2',
           price: 0,
         },
       ],
