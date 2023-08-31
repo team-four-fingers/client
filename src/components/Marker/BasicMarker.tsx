@@ -21,6 +21,7 @@ export default function BasicMarker({ position, type }: BasicMarkerProps) {
     <MapMarker
       position={markerPosition}
       image={{ src: markerSrc[type], size: { width: 44, height: 59 } }}
+      clickable={false}
     />
   )
 }
