@@ -101,7 +101,12 @@ export default function Cart() {
                   }
                 }}
               />
-              <img src={item.product.image_url} width={80} height={80} />
+              <img
+                src={item.product.image_url}
+                width={80}
+                height={80}
+                style={{ borderRadius: '12px' }}
+              />
               <div
                 style={{
                   display: 'flex',
