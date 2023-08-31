@@ -1,4 +1,4 @@
-import { Map, MapMarker, Polyline } from 'react-kakao-maps-sdk'
+import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useRecoilValue } from 'recoil'
 import { cartItemsState } from '../recoil/cart-items'
 import { useEffect, useState } from 'react'
@@ -6,6 +6,7 @@ import axios from 'axios'
 
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
+import { RoadLine } from '../components/Line/RoadLine'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
@@ -77,28 +78,7 @@ export default function BestRoute() {
         level={3}
         style={{ width: '100%', height: '100%' }}
       >
-        // TODO: 컴포넌트 분리
-        <Polyline
-          path={[coordinatesInOrder]}
-          strokeWeight={15}
-          strokeColor={'#5C759D'}
-          strokeOpacity={1}
-          strokeStyle={'solid'}
-        />
-        <Polyline
-          path={[coordinatesInOrder]}
-          strokeWeight={13}
-          strokeColor={'#84A7E2'}
-          strokeOpacity={1}
-          strokeStyle={'solid'}
-        />
-        <Polyline
-          path={[coordinatesInOrder]}
-          strokeWeight={2}
-          strokeColor={'#FFFFFF'}
-          strokeOpacity={1}
-          strokeStyle={'shortdash'}
-        />
+        <RoadLine path={coordinatesInOrder} />
         <BasicMarker
           key={`${Origin.y},${Origin.x}`}
           position={{ lat: Origin.y, lng: Origin.x }}
