@@ -4,7 +4,6 @@ import 'slick-carousel/slick/slick-theme.css'
 import Slider from 'react-slick'
 import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useRecoilValue } from 'recoil'
-import { Product, cartItemsState } from '../recoil/cart-items'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 
@@ -13,15 +12,16 @@ import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
 import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi, ApiPath } from '../api'
 import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
+import { searchResultItemCartState } from '../recoil/search-result-items'
+import { SearchResultItem } from './Search'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
-  const cartItems = useRecoilValue(cartItemsState)
-  const products: (Product & { storeName: string })[] = cartItems.items.flatMap(item => {
-    return item.products.map(product => ({ ...product, storeName: item.store.name }))
-  })
 
-  const itemsCount = products.length
+  const selectedSearchResultItems = useRecoilValue(searchResultItemCartState).filter(
+    item => item.isSelected,
+  )
+  const itemsCount = selectedSearchResultItems.length
 
   const { data } = useQuery(
     [ApiPath.routes],
@@ -29,7 +29,12 @@ export default function BestRoute() {
       await routeApi({
         origin: MOCK_ORIGIN,
         destination: MOCK_DESTINATION,
-        waypoints: cartItems.items.map(item => item.store),
+        waypoints: selectedSearchResultItems.map(item => {
+          return {
+            ...item.store,
+            coordinate: { y: item.store.coordinate.lat, x: item.store.coordinate.lng },
+          }
+        }),
       }),
   )
 
@@ -119,7 +124,7 @@ export default function BestRoute() {
         duration_in_minutes={duration_in_minutes}
         distance_in_meters={distance_in_meters}
         itemsCount={itemsCount}
-        products={products}
+        searchResultItems={selectedSearchResultItems}
       />
     </div>
   )
@@ -129,12 +134,12 @@ const BestRouteModal = ({
   duration_in_minutes,
   distance_in_meters,
   itemsCount,
-  products,
+  searchResultItems,
 }: {
   duration_in_minutes: number
   distance_in_meters: number
   itemsCount: number
-  products: (Product & { storeName: string })[]
+  searchResultItems: SearchResultItem[]
 }) => {
   return (
     <div
@@ -202,9 +207,9 @@ const BestRouteModal = ({
           slidesToScroll: 1,
         }}
       >
-        {products.map(product => {
+        {searchResultItems.map(item => {
           return (
-            <div key={product.name}>
+            <div key={item.store.name}>
               <div
                 style={{
                   padding: '12px',
@@ -217,7 +222,7 @@ const BestRouteModal = ({
               >
                 <img
                   //TODO: 이미지 경로 변경
-                  src='https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80'
+                  src={item.product.image_url}
                   width={'60px'}
                   height={'60px'}
                   style={{ borderRadius: '10px' }}
@@ -230,7 +235,7 @@ const BestRouteModal = ({
                       lineHeight: 'normal',
                     }}
                   >
-                    {product.storeName}
+                    {item.store.name}
                   </span>
                   <span
                     style={{
@@ -239,7 +244,7 @@ const BestRouteModal = ({
                       lineHeight: 'normal',
                     }}
                   >
-                    {product.name}
+                    {item.product.name}
                   </span>
                   <span
                     style={{
@@ -248,7 +253,7 @@ const BestRouteModal = ({
                       lineHeight: 'normal',
                     }}
                   >
-                    {product.price}
+                    {item.product.price}
                   </span>
                 </div>
               </div>
