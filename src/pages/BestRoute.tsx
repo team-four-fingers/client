@@ -2,11 +2,11 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useRecoilValue } from 'recoil'
 import { cartItemsState } from '../recoil/cart-items'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
+import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi } from '../api'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
@@ -96,49 +96,4 @@ export default function BestRoute() {
       </Map>
     </div>
   )
-}
-
-const MOCK_ORIGIN = {
-  x: 126.946362033068,
-  y: 37.5404741779088,
-}
-const MOCK_DESTINATION = {
-  x: 127.1101250888609,
-  y: 37.39407843730005,
-}
-
-const MOCK_STORE1 = {
-  coordinate: {
-    x: 126.92716700037366,
-    y: 37.5266641708316,
-  },
-  name: '상점1',
-  operation_hours: '',
-  has_parking_lot: true,
-  distance_from_origin: 0,
-}
-
-const MOCK_REQUEST = {
-  origin: MOCK_ORIGIN,
-  destination: MOCK_DESTINATION,
-  waypoints: [MOCK_STORE1],
-}
-
-//TODO: api 폴더로 이동
-const routeApi = (request: typeof MOCK_REQUEST) => {
-  return axios.post<TempType>(`${API_BASE_URL}/routes`, request)
-}
-
-const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
-
-interface TempType {
-  Origin: Coordinate
-  Destination: Coordinate
-  Waypoints: Coordinate[]
-  CoordinatesInOrder: Coordinate[]
-}
-
-interface Coordinate {
-  x: number
-  y: number
 }
