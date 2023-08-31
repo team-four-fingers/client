@@ -2,6 +2,7 @@ import { Map, MapMarker } from 'react-kakao-maps-sdk'
 import { useRecoilValue } from 'recoil'
 import { cartItemsState } from '../recoil/cart-items'
 import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
 
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
@@ -12,6 +13,8 @@ import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
   const cartItems = useRecoilValue(cartItemsState)
+  const products = cartItems.items.flatMap(item => item.products)
+  const itemsCount = products.length
 
   const { data } = useQuery(
     [ApiPath.routes],
@@ -63,7 +66,14 @@ export default function BestRoute() {
     )
   }
 
-  const { coordinates_in_order, origin, destination, waypoints } = data.data
+  const {
+    coordinates_in_order,
+    origin,
+    destination,
+    waypoints,
+    duration_in_minutes,
+    distance_in_m,
+  } = data.data
 
   const coordinatesInOrder = coordinates_in_order.map(item => ({
     lat: item.y,
@@ -93,7 +103,7 @@ export default function BestRoute() {
           position={{ lat: destination.y, lng: destination.x }}
           type='arrival'
         />
-        // TODO: 경유지 마커로 변경
+        {/* // TODO: 경유지 마커로 변경 */}
         {waypoints.map(({ coordinate: { x, y } }) => (
           <MapMarker key={`${y},${x}`} position={{ lat: y, lng: x }}></MapMarker>
         ))}
@@ -109,9 +119,101 @@ export default function BestRoute() {
           borderRadius: '16px 16px 0 0',
           zIndex: 10,
           padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        모달모달
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ color: 'var(--gray-050, #111)', fontSize: '18px', fontWeight: 700 }}>
+            추천 경로
+          </div>
+          <div
+            style={{
+              padding: '6px',
+              borderRadius: '6px',
+              background: 'var(--gray-750, #F0F2F5)',
+              color: 'var(--gray-400, #878E9C)',
+              fontSize: '13px',
+            }}
+          >
+            자세히 보기
+          </div>
+        </div>
+        <div style={{ height: '8px' }} />
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            alignItems: 'center',
+            fontSize: '18px',
+            fontWeight: 500,
+            color: 'var(--gray-150, #444B55)',
+          }}
+        >
+          <div>{duration_in_minutes}분</div>
+          <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
+          <div>{format(new Date(Date.now() + duration_in_minutes), 'HH:mm')} 도착</div>
+          <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
+          <div>{distance_in_m / 1000} km</div>
+        </div>
+        <div style={{ height: '32px' }} />
+        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+          <div style={{ color: 'var(--gray-050, #111)', fontSize: '15px', fontWeight: 700 }}>
+            담긴 상품
+          </div>
+          <div style={{ color: 'var(--blue-100, #4A88E5)', fontSize: '15px', fontWeight: 700 }}>
+            {itemsCount}
+          </div>
+        </div>
+        <div style={{ height: '8px' }} />
+        {/* // TODO: 상품 캐러샐 */}
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {products.map(product => {
+            return (
+              <div
+                key={product.name}
+                style={{
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--gray-700, #E5E8ED)',
+                }}
+              >
+                {product.name}
+              </div>
+            )
+          })}
+        </div>
+        <div style={{ height: '32px' }} />
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            type='button'
+            style={{
+              padding: '20px 24px',
+              flex: '1 0 0',
+              borderRadius: '12px',
+              background: 'var(--blue-100, #4A88E5)',
+              color: 'var(--white-900, #FFF)',
+              fontSize: '16px',
+              fontWeight: 700,
+            }}
+          >
+            미리 결제하고 길 안내
+          </button>
+          <button
+            type='button'
+            style={{
+              padding: '20px 24px',
+              borderRadius: '12px',
+              background: 'var(--blue-10015, rgba(74, 136, 229, 0.15))',
+              color: 'var(--blue-300, #2C6AC7)',
+              fontSize: '16px',
+              fontWeight: 700,
+              flexShrink: 0,
+            }}
+          >
+            바로 길 안내
+          </button>
+        </div>
       </div>
     </div>
   )
