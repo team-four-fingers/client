@@ -23,8 +23,13 @@ export default function SearchResult() {
   const [modalData, setModalData] = useState<SearchResultItem | null>(null)
   const [map, setMap] = useState<kakao.maps.Map>()
 
+  const resultListWithId = resultList.map((result: SearchResultItem, index: number) => ({
+    ...result,
+    result_id: index + 1,
+  }))
+
   const [markers, setMarkers] = useState<Marker[]>(
-    resultList.map((result: SearchResultItem) => {
+    resultListWithId.map((result: SearchResultItem) => {
       return {
         id: result.result_id,
         position: result.store.coordinate,
@@ -42,7 +47,9 @@ export default function SearchResult() {
         focus: marker.id === id,
       })),
     )
-    setModalData(resultList.find((result: SearchResultItem) => result.result_id === id) || null)
+    setModalData(
+      resultListWithId.find((result: SearchResultItem) => result.result_id === id) || null,
+    )
     setIsModalOpen(true)
   }
 
@@ -62,17 +69,12 @@ export default function SearchResult() {
     }
 
     extendBounds()
-  }, [])
+  }, [map])
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <SearchResultHeader keyword={keyword} count={resultList.length} />
-      <Map
-        center={myPosition}
-        onCreate={setMap}
-        level={3}
-        style={{ width: '100%', height: '100%' }}
-      >
+      <Map center={myPosition} onCreate={setMap} style={{ width: '100%', height: '100%' }}>
         <BasicMarker position={myPosition} type='current' />
         {markers.map(({ id, position, focus, handleClick }) => (
           <ImageMarker
