@@ -26,24 +26,24 @@ interface RoutesResponse {
   comparison: RoutesComparison
 }
 
-interface RoutesComparison {
+export interface RoutesComparison {
   saved_time_in_minutes: number
   saved_gas_cost: number
   control: {
-    duration_in_minutes: number
     distance_in_meters: number
+    duration_in_minutes: number
     gas_cost: number
     route: Route
   }
   treatment: {
-    duration_in_minutes: number
     distance_in_meters: number
+    duration_in_minutes: number
     gas_cost: number
     routes: Route[]
   }
 }
 
-interface Route {
+export interface Route {
   origin: Coordinate
   destination: Coordinate
   waypoints: Waypoint[]

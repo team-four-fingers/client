@@ -6,6 +6,7 @@ import SavedRoutes from '../pages/SavedRoutes.tsx'
 import SearchResult from '../pages/SearchResult.tsx'
 import Preview from '../pages/Preview.tsx'
 import BestRoute from '../pages/BestRoute.tsx'
+import BestRouteComparison from '../pages/BestRouteComparison.tsx'
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
   {
     path: 'bestRoute',
     element: <BestRoute />,
+  },
+  {
+    path: 'bestRoute/comparison',
+    element: <BestRouteComparison />,
   },
 ])
 
