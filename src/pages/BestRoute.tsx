@@ -14,7 +14,7 @@ export default function BestRoute() {
   const cartItems = useRecoilValue(cartItemsState)
 
   const { data } = useQuery(
-    [ApiPath.routes],
+    [ApiPath.mockRoutes],
     async () =>
       await routeApi({
         origin: MOCK_ORIGIN,
