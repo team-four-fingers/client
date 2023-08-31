@@ -65,6 +65,7 @@ export interface SearchResultList {
 
 export default function Search() {
   const [center, setCenter] = useState({ lat: 37.3941037, lng: 127.1100201 })
+  const [address, setAddress] = useState<string>('내 위치 찾는 중...')
   const navigate = useNavigate()
 
   const setOriginState = useSetRecoilState(originState)
@@ -74,6 +75,10 @@ export default function Search() {
       const location = await getMyGps()
       setCenter(location)
       setOriginState({ y: location.lat, x: location.lng })
+      await getAddr(location).then(addr => {
+        const address = addr.data.documents[0].road_address.address_name
+        setAddress(address)
+      })
     })()
   }, [setOriginState])
 
@@ -100,6 +105,14 @@ export default function Search() {
         },
         gpsOptions,
       )
+    })
+  }
+
+  const getAddr = async ({ lat, lng }: LatLng) => {
+    return axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`, {
+      headers: {
+        Authorization: `KakaoAK ${import.meta.env.VITE_KAKAO_MAP_REST_API_KEY}`,
+      },
     })
   }
 
@@ -145,7 +158,7 @@ export default function Search() {
       <Map center={center} style={{ width: '100%', height: '100%' }}>
         <BasicMarker type='current' position={center} />
       </Map>
-      <CurrentLocationBanner address={'알파돔~'} />
+      <CurrentLocationBanner address={address} />
       <TapBar />
     </div>
   )
