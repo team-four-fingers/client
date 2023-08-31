@@ -6,15 +6,14 @@ import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
-import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi } from '../api'
+import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi, ApiPath } from '../api'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
   const cartItems = useRecoilValue(cartItemsState)
 
   const { data } = useQuery(
-    // TODO: api key 수정
-    ['bestRoute'],
+    [ApiPath.routes],
     async () =>
       await routeApi({
         origin: MOCK_ORIGIN,

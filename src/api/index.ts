@@ -4,7 +4,7 @@ const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
 
 const ApiPath = { routes: '/routes' } as const
 
-//TODO: api 폴더로 이동
+// TODO: 파일 분리
 export const routeApi = (request: typeof MOCK_REQUEST) => {
   return axios.post<TempType>(`${API_BASE_URL}${ApiPath.routes}`, request)
 }
