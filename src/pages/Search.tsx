@@ -1,10 +1,15 @@
-import { useEffect, useState } from 'react'
-import { Map } from 'react-kakao-maps-sdk'
+import { ChangeEvent, useEffect, useState } from 'react'
+import { Map, MapMarker } from 'react-kakao-maps-sdk'
 
 import TapBar from '../components/TapBar'
 
 export default function Search() {
+  const [map, setMap] = useState<kakao.maps.Map>()
+  const [markers, setMarkers] = useState<
+    { position: { lat: number; lng: number }; content: string }[]
+  >([])
   const [center, setCenter] = useState({ lat: 33.5563, lng: 126.79581 })
+  const [info, setInfo] = useState<{ position: { lat: number; lng: number }; content: string }>()
 
   useEffect(() => {
     ;(async () => {
@@ -13,10 +18,51 @@ export default function Search() {
     })()
   }, [])
 
+  const search = (keyword: string) => {
+    if (!map) {
+      return
+    }
+
+    const ps = new kakao.maps.services.Places()
+
+    ps.keywordSearch(keyword, (data, status, _pagination) => {
+      // TODO: status에 따라 분기
+      if (status === kakao.maps.services.Status.OK) {
+        const bounds = new kakao.maps.LatLngBounds()
+        const markers = data.map(item => ({
+          position: {
+            lat: Number(item.y),
+            lng: Number(item.x),
+          },
+          content: item.place_name,
+        }))
+        setMarkers(markers)
+
+        data.forEach(item => {
+          bounds.extend(new kakao.maps.LatLng(Number(item.y), Number(item.x)))
+        })
+        // 검색된 장소 위치를 기준으로 지도 범위를 재설정
+        map.setBounds(bounds)
+      }
+    })
+  }
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <SearchBar value='' />
-      <Map center={center} style={{ width: '100%', height: '100%' }}></Map>
+      <SearchBar onSearch={search} />
+      <Map center={center} style={{ width: '100%', height: '100%' }} onCreate={setMap}>
+        {markers.map(marker => (
+          <MapMarker
+            key={`marker-${marker.content}-${marker.position.lat},${marker.position.lng}`}
+            position={marker.position}
+            onClick={() => setInfo(marker)}
+          >
+            {info && info.content === marker.content && (
+              <div style={{ color: '#000' }}>{marker.content}</div>
+            )}
+          </MapMarker>
+        ))}
+      </Map>
       <TapBar />
     </div>
   )
@@ -49,7 +95,20 @@ const getMyGps = (): Promise<{ lat: number; lon: number }> => {
 }
 
 // TODO: css 분리, 컴포넌트 이동
-const SearchBar = ({ value }: { value: string }) => {
+const SearchBar = ({ onSearch }: { onSearch: (keyword: string) => void }) => {
+  const [value, setValue] = useState('')
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
+  }
+
+  const [isFocused, setIsFocused] = useState(false)
+  const onFocus = () => {
+    setIsFocused(true)
+  }
+  const onBlur = () => {
+    setIsFocused(false)
+  }
+
   return (
     <div
       style={{
@@ -75,9 +134,19 @@ const SearchBar = ({ value }: { value: string }) => {
           id='search-bar'
           placeholder='무엇이든 한 번에 찾아보세요'
           value={value}
+          onChange={onChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
           style={{ color: 'var(--gray-400, #878E9C)', border: 'none', flex: 1 }}
         />
-        <SearchIcon width={24} height={24} />
+
+        <SearchIcon
+          width={24}
+          height={24}
+          onClick={() => {
+            onSearch(value)
+          }}
+        />
       </div>
     </div>
   )
@@ -87,10 +156,12 @@ const SearchIcon = ({
   width,
   height,
   color,
+  onClick,
 }: {
   width: number
   height: number
   color?: string
+  onClick: () => void
 }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
@@ -98,6 +169,7 @@ const SearchIcon = ({
     height={height}
     viewBox='0 0 24 24'
     fill='none'
+    onClick={onClick}
   >
     <path
       fill-rule='evenodd'
