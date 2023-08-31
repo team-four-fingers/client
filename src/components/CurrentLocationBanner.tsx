@@ -2,7 +2,7 @@ import Icon from './Icon'
 
 import styles from './CurrentLocationBanner.module.scss'
 
-export default function CurrentLocationBanner() {
+export default function CurrentLocationBanner({ address }: { address: string }) {
   return (
     <div className={styles.container}>
       <Icon name='icon-spot-white' />
@@ -12,7 +12,7 @@ export default function CurrentLocationBanner() {
             <span>내 위치</span>를 기준으로 찾아볼게요
           </strong>
         </p>
-        <p className={styles.addr}>서울 성동구 왕십리로 83-21</p>
+        <p className={styles.addr}>{address}</p>
       </div>
     </div>
   )
