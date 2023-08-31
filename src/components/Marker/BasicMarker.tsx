@@ -9,7 +9,7 @@ type MarkerType = {
   type: 'current' | 'depart' | 'arrival' // 내위치, 출발, 도착
 }
 
-export function BasicMarker({ position, type }: MarkerType) {
+export default function BasicMarker({ position, type }: MarkerType) {
   const markerPosition = { lat: position.lat, lng: position.lng }
   const markerSrc = {
     current: markerCurrentUrl,
