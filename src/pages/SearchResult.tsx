@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 import ImageMarker from '../components/Marker/ImageMarker'
 import BasicMarker from '../components/Marker/BasicMarker'
 import ProductDetailModal from '../components/ProductDetailModal'
 import { useLocation } from 'react-router-dom'
-import { SearchResultList, SearchResultItem } from './Search'
+import { SearchResultItem } from './Search'
 import SearchResultHeader from '../components/SearchResultHeader'
 
 type Marker = {
@@ -17,13 +17,13 @@ type Marker = {
 
 export default function SearchResult() {
   const { state } = useLocation()
-  const { resultList } = state as { resultList: SearchResultList }
-  const currentPosition = { lat: 37.54412, lng: 127.043412 }
+  const { resultList, keyword, myPosition } = state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [modalData, setModalData] = useState<SearchResultItem | null>(null)
+  const [map, setMap] = useState<kakao.maps.Map>()
 
   const [markers, setMarkers] = useState<Marker[]>(
-    resultList.results.map(result => {
+    resultList.map((result: SearchResultItem) => {
       return {
         id: result.result_id,
         position: result.store.coordinate,
@@ -41,15 +41,38 @@ export default function SearchResult() {
         focus: marker.id === id,
       })),
     )
-    setModalData(resultList.results.find(result => result.result_id === id) || null)
+    setModalData(resultList.find((result: SearchResultItem) => result.result_id === id) || null)
     setIsModalOpen(true)
   }
 
+  useEffect(() => {
+    const extendBounds = () => {
+      if (markers.length < 0 || map === undefined) {
+        return
+      }
+
+      const bounds = new kakao.maps.LatLngBounds()
+      markers.forEach(marker => {
+        bounds.extend(new kakao.maps.LatLng(marker.position.lat, marker.position.lng))
+      })
+      bounds.extend(new kakao.maps.LatLng(myPosition.lat, myPosition.lng))
+
+      map.setBounds(bounds)
+    }
+
+    extendBounds()
+  }, [markers, map])
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <SearchResultHeader keyword='샤브샤브' count={resultList.results.length} />
-      <Map center={currentPosition} style={{ width: '100%', height: '100%' }}>
-        <BasicMarker position={currentPosition} type='current' />
+      <SearchResultHeader keyword={keyword} count={resultList.length} />
+      <Map
+        center={myPosition}
+        onCreate={setMap}
+        level={3}
+        style={{ width: '100%', height: '100%' }}
+      >
+        <BasicMarker position={myPosition} type='current' />
         {markers.map(({ id, position, focus, imageUrl, handleClick }) => (
           <ImageMarker
             key={id}

@@ -1,11 +1,39 @@
-import { useState } from 'react'
+import axios from 'axios'
+import { useState, useEffect } from 'react'
 import { Map } from 'react-kakao-maps-sdk'
 import CurrentLocationBanner from '../components/CurrentLocationBanner'
 import TapBar from '../components/TapBar'
-
-import productUrl from '../assets/product_sample.png'
 import BasicMarker from '../components/Marker/BasicMarker'
+import Icon from '../components/Icon'
 import { useNavigate } from 'react-router-dom'
+
+type requestType = {
+  query: string
+  origin: {
+    x: number
+    y: number
+  }
+  radius: number
+  when_type: string
+  eat_type: string
+}
+
+type responseItemType = {
+  result_id: number
+  when_types: string[]
+  product: {
+    name: string
+    price: number
+    image_url: string
+  }
+  store: {
+    coordinate: { x: number; y: number; lat: number; lng: number }
+    name: string
+    operation_hours: string
+    has_parking_lot: boolean
+    distance_from_origin: number
+  }
+}
 
 export interface SearchResultItem {
   result_id: number
@@ -28,79 +56,86 @@ export interface SearchResultList {
   results: SearchResultItem[]
 }
 
-const resultList: SearchResultList = {
-  results: [
-    {
-      result_id: 1,
-      when_types: ['when_type1'],
-      product: {
-        name: '제품1',
-        price: 20000,
-        image_url: productUrl,
-      },
-      store: {
-        coordinate: { lat: 37.54452, lng: 127.043452 },
-        name: '상점1',
-        operation_hours: '9:00~18:00',
-        has_parking_lot: true,
-        distance_from_origin: 32,
-      },
-    },
-    {
-      result_id: 2,
-      when_types: ['when_type2'],
-      product: {
-        name: '제품2',
-        price: 4900,
-        image_url: productUrl,
-      },
-      store: {
-        coordinate: { lat: 37.54452, lng: 127.0439 },
-        name: '상점2',
-        operation_hours: '10:00~20:00',
-        has_parking_lot: false,
-        distance_from_origin: 100,
-      },
-    },
-    {
-      result_id: 3,
-      when_types: ['when_type3'],
-      product: {
-        name: '제품3',
-        price: 10900,
-        image_url: productUrl,
-      },
-      store: {
-        coordinate: { lat: 37.54532, lng: 127.043452 },
-        name: '상점3',
-        operation_hours: '10:00~20:00',
-        has_parking_lot: false,
-        distance_from_origin: 1200,
-      },
-    },
-  ],
-}
-
 export default function Search() {
-  const [center] = useState({ lat: 37.54412, lng: 127.043412 })
+  const [center, setCenter] = useState({ lat: 37.3941037, lng: 127.1100201 })
   const navigate = useNavigate()
 
-  const handleSearchIconClick = () => {
+  useEffect(() => {
+    ;(async () => {
+      const location = await getMyGps()
+      setCenter({ lat: location.lat, lng: location.lng })
+    })()
+  }, [])
+
+  const getMyGps = (): Promise<{ lat: number; lng: number }> => {
+    const gpsOptions = {
+      enableHighAccuracy: true,
+      timeout: 5000,
+    }
+
+    return new Promise(resolve => {
+      if (!navigator.geolocation) {
+        resolve({ lat: 33.450701, lng: 126.570667 })
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude // 위도
+          const lng = position.coords.longitude // 경도
+
+          resolve({ lat: lat, lng: lng })
+        },
+        () => {
+          resolve({ lat: 33.450701, lng: 126.570667 })
+        },
+        gpsOptions,
+      )
+    })
+  }
+
+  const API_BASE_URL = 'https://server-pu7vk6hfqq-du.a.run.app'
+
+  const getResultByKeyword = async (request: requestType) => {
+    const { data } = await axios.post(`${API_BASE_URL}/search`, request)
+    return data
+  }
+
+  const handleSearchIconClick = async (keyword: string) => {
+    console.log(keyword)
+    const request = {
+      query: keyword,
+      origin: {
+        x: center.lng,
+        y: center.lat,
+      },
+      radius: 0,
+      when_type: '아침',
+      eat_type: '',
+    }
+    const data = await getResultByKeyword(request)
+
+    const resultList = data.results.map((result: responseItemType) => {
+      result.store.coordinate.lat = result.store.coordinate.y
+      result.store.coordinate.lng = result.store.coordinate.x
+      return result
+    })
+
     navigate('/searchResult', {
       state: {
-        // 검색결과 전달
         resultList,
+        keyword,
+        myPosition: center,
       },
     })
   }
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <SearchBar value='' handleSearchIconClick={handleSearchIconClick} />
+      <SearchBar handleSearchIconClick={handleSearchIconClick} />
       <Map center={center} style={{ width: '100%', height: '100%' }}>
         <BasicMarker type='current' position={center} />
       </Map>
-      <CurrentLocationBanner />
+      <CurrentLocationBanner address={'알파돔~'} />
       <TapBar />
     </div>
   )
@@ -108,69 +143,128 @@ export default function Search() {
 
 // TODO: css 분리, 컴포넌트 이동
 const SearchBar = ({
-  value,
   handleSearchIconClick,
 }: {
-  value: string
-  handleSearchIconClick: () => void
+  handleSearchIconClick: (keyword: string) => void
 }) => {
+  const [searchValue, setSearchValue] = useState<string>('')
+  const [isSearchBarOpen, setIsSearchBarOpen] = useState<boolean>(false)
+
+  const handleFakeSearchBarClick = () => {
+    setIsSearchBarOpen(true)
+  }
+
   return (
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        zIndex: 10,
-        padding: '12px',
-        width: '100%',
-      }}
-    >
+    <>
       <div
+        className='fakeSearchBar'
         style={{
-          padding: '16px',
-          borderRadius: '12px',
-          backgroundColor: 'white',
+          position: 'fixed',
+          top: '56px',
+          zIndex: 50,
+          padding: '0 12px',
           width: '100%',
-          display: 'flex',
+          maxWidth: '640px',
         }}
+        onClick={handleFakeSearchBarClick}
       >
-        <input
-          type='text'
-          id='search-bar'
-          placeholder='무엇이든 한 번에 찾아보세요'
-          value={value}
-          style={{ color: 'var(--gray-400, #878E9C)', border: 'none', flex: 1 }}
-        />
-        <SearchIcon width={24} height={24} handleClick={handleSearchIconClick} />
+        <div
+          className='inner'
+          style={{
+            backgroundColor: 'white',
+            padding: '16px',
+            borderRadius: '12px',
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <p style={{ color: '#878E9C' }}>무엇이든 한 번에 찾아보세요</p>
+          <Icon name='icon-search-line' />
+        </div>
       </div>
-    </div>
+
+      {isSearchBarOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            width: '100%',
+            maxWidth: '640px',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            className='searchBar'
+            style={{
+              width: '100%',
+              color: 'var(--gray-400, #878E9C)',
+              border: 'none',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '12px',
+              backgroundColor: 'white',
+              padding: '16px 12px 22px 20px',
+              borderBottom: '1px solid #F0F2F5',
+            }}
+          >
+            <button
+              type='button'
+              style={{
+                display: 'flex',
+              }}
+              onClick={() => setIsSearchBarOpen(false)}
+            >
+              <Icon name='icon-back' />
+            </button>
+            <input
+              type='text'
+              id='search-bar'
+              placeholder='무엇이든 한 번에 찾아보세요'
+              value={searchValue}
+              onChange={e => setSearchValue(e.target.value)}
+              style={{
+                color: 'var(--gray-400, #878E9C)',
+                backgroundColor: 'white',
+                border: 'none',
+                flex: 1,
+              }}
+            />
+            <button
+              type='button'
+              onClick={() => handleSearchIconClick(searchValue)}
+              style={{ display: 'flex' }}
+            >
+              <Icon name='icon-search-line' />
+            </button>
+          </div>
+          <div
+            className='filterList'
+            style={{
+              width: '100%',
+              height: 'calc(100vh - 56px)',
+              backgroundColor: 'white',
+              padding: '24px 20px',
+            }}
+          >
+            <div>언제 필요한가요?</div>
+            <ul>
+              <li>직접조리</li>
+              <li>픽업</li>
+              <li>매장식사</li>
+              <li>재료민</li>
+            </ul>
+            <div>어떤 방식을 선호하나요?</div>
+            <ul>
+              <li>직접조리</li>
+              <li>픽업</li>
+              <li>매장식사</li>
+              <li>재료민</li>
+            </ul>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
-
-const SearchIcon = ({
-  width,
-  height,
-  color,
-  handleClick,
-}: {
-  width: number
-  height: number
-  color?: string
-  handleClick: () => void
-}) => (
-  <svg
-    xmlns='http://www.w3.org/2000/svg'
-    width={width}
-    height={height}
-    viewBox='0 0 24 24'
-    fill='none'
-    onClick={handleClick}
-  >
-    <path
-      fillRule='evenodd'
-      clipRule='evenodd'
-      d='M4 10C4 6.68629 6.68629 4 10 4C13.3137 4 16 6.68629 16 10C16 13.3137 13.3137 16 10 16C6.68629 16 4 13.3137 4 10ZM10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18C12.0292 18 13.8819 17.2445 15.2923 15.9995L20.6465 21.3537C21.037 21.7442 21.6701 21.7442 22.0607 21.3537C22.4512 20.9631 22.4512 20.33 22.0607 19.9395L16.6177 14.4965C17.4901 13.2151 18 11.6671 18 10C18 5.58172 14.4183 2 10 2Z'
-      fill={color ? color : '#111111'}
-    />
-  </svg>
-)
