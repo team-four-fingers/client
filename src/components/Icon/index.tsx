@@ -21,7 +21,7 @@ export type IconNameType =
 
 type IconType = {
   name: IconNameType
-  size?: 12 | 24
+  size?: number
 }
 
 export default function Icon({ name, size = 24 }: IconType) {

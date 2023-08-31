@@ -7,13 +7,14 @@ import { useQuery } from 'react-query'
 import BasicMarker from '../components/Marker/BasicMarker'
 import { RoadLine } from '../components/Line/RoadLine'
 import { MOCK_DESTINATION, MOCK_ORIGIN, routeApi, ApiPath } from '../api'
+import { BestRouteWaypointsBar } from '../components/BestRouteWaypointsBar'
 
 export default function BestRoute() {
   const [map, setMap] = useState<kakao.maps.Map>()
   const cartItems = useRecoilValue(cartItemsState)
 
   const { data } = useQuery(
-    [ApiPath.routes],
+    [ApiPath.mockRoutes],
     async () =>
       await routeApi({
         origin: MOCK_ORIGIN,
@@ -69,8 +70,12 @@ export default function BestRoute() {
     lng: item.x,
   }))
 
+  // TODO: 데이터 사용
+  const waypointNames = ['출발', '1경유', '도착']
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <BestRouteWaypointsBar waypointNames={waypointNames} />
       <Map
         center={{ lat: Origin.y, lng: Origin.x }}
         onCreate={setMap}
