@@ -6,6 +6,7 @@ import ProductDetailModal from '../components/ProductDetailModal'
 import { useLocation } from 'react-router-dom'
 import { SearchResultItem } from './Search'
 import SearchResultHeader from '../components/SearchResultHeader'
+import productUrl from '../assets/product_sample.png'
 
 type Marker = {
   id: number
@@ -61,7 +62,7 @@ export default function SearchResult() {
     }
 
     extendBounds()
-  }, [markers, map])
+  }, [])
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
@@ -73,12 +74,12 @@ export default function SearchResult() {
         style={{ width: '100%', height: '100%' }}
       >
         <BasicMarker position={myPosition} type='current' />
-        {markers.map(({ id, position, focus, imageUrl, handleClick }) => (
+        {markers.map(({ id, position, focus, handleClick }) => (
           <ImageMarker
             key={id}
             position={position}
             color={focus ? 'blue' : 'gray'}
-            imageUrl={imageUrl}
+            thumbnailUrl={productUrl}
             handleClick={handleClick}
           />
         ))}

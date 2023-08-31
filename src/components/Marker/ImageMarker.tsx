@@ -6,7 +6,7 @@ import markerGrayUrl from '../../assets/image-marker-gray.svg'
 type ImageMarkerType = {
   position: { lat: number; lng: number }
   color: 'blue' | 'gray' | 'orange'
-  imageUrl: string
+  thumbnailUrl: string
   handleClick?: () => void
 }
 
@@ -16,10 +16,15 @@ const backgroundMarker = {
   gray: { src: markerGrayUrl, size: { width: 52, height: 72 } },
 }
 
-export default function ImageMarker({ position, color, imageUrl, handleClick }: ImageMarkerType) {
+export default function ImageMarker({
+  position,
+  color,
+  thumbnailUrl,
+  handleClick,
+}: ImageMarkerType) {
   const imagePosition = { lat: position.lat, lng: position.lng }
   const imageSize = { width: 38, height: 72 }
-  const imageInfo = { src: imageUrl, size: imageSize }
+  const imageInfo = { src: thumbnailUrl, size: imageSize }
 
   return (
     <>
