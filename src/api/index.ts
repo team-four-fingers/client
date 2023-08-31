@@ -21,7 +21,7 @@ interface RoutesResponse {
   waypoints: Waypoint[]
   coordinates_in_order: Coordinate[]
   duration_in_minutes: number
-  distance_in_m: number
+  distance_in_meters: number
   comparison: {
     saved_time_in_minutes: number
     saved_gas_cost: number
@@ -37,7 +37,7 @@ interface RoutesResponse {
     }
     treatment: {
       duration_in_minutes: number
-      distance_in_km: number
+      distance_in_meters: number
       gas_cost: number
       routes: null
     }

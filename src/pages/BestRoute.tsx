@@ -79,7 +79,7 @@ export default function BestRoute() {
     destination,
     waypoints,
     duration_in_minutes,
-    distance_in_m,
+    distance_in_meters,
   } = data.data
 
   const coordinatesInOrder = coordinates_in_order.map(item => ({
@@ -115,155 +115,177 @@ export default function BestRoute() {
         ))}
       </Map>
 
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          width: '100%',
-          backgroundColor: 'white',
-          borderRadius: '16px 16px 0 0',
-          zIndex: 10,
-          padding: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ color: 'var(--gray-050, #111)', fontSize: '18px', fontWeight: 700 }}>
-            추천 경로
-          </div>
-          <div
-            style={{
-              padding: '6px',
-              borderRadius: '6px',
-              background: 'var(--gray-750, #F0F2F5)',
-              color: 'var(--gray-400, #878E9C)',
-              fontSize: '13px',
-            }}
-          >
-            자세히 보기
-          </div>
+      <BestRouteModal
+        duration_in_minutes={duration_in_minutes}
+        distance_in_meters={distance_in_meters}
+        itemsCount={itemsCount}
+        products={products}
+      />
+    </div>
+  )
+}
+
+const BestRouteModal = ({
+  duration_in_minutes,
+  distance_in_meters,
+  itemsCount,
+  products,
+}: {
+  duration_in_minutes: number
+  distance_in_meters: number
+  itemsCount: number
+  products: (Product & { storeName: string })[]
+}) => {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: '16px 16px 0 0',
+        zIndex: 10,
+        padding: '20px',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ color: 'var(--gray-050, #111)', fontSize: '18px', fontWeight: 700 }}>
+          추천 경로
         </div>
-        <div style={{ height: '8px' }} />
         <div
           style={{
-            display: 'flex',
-            gap: '8px',
-            alignItems: 'center',
-            fontSize: '18px',
-            fontWeight: 500,
-            color: 'var(--gray-150, #444B55)',
+            padding: '6px',
+            borderRadius: '6px',
+            background: 'var(--gray-750, #F0F2F5)',
+            color: 'var(--gray-400, #878E9C)',
+            fontSize: '13px',
           }}
         >
-          <div>{duration_in_minutes}분</div>
-          <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
-          <div>{format(new Date(Date.now() + duration_in_minutes), 'HH:mm')} 도착</div>
-          <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
-          <div>{distance_in_m / 1000} km</div>
+          자세히 보기
         </div>
-        <div style={{ height: '32px' }} />
-        <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-          <div style={{ color: 'var(--gray-050, #111)', fontSize: '15px', fontWeight: 700 }}>
-            담긴 상품
-          </div>
-          <div style={{ color: 'var(--blue-100, #4A88E5)', fontSize: '15px', fontWeight: 700 }}>
-            {itemsCount}
-          </div>
+      </div>
+      <div style={{ height: '8px' }} />
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          alignItems: 'center',
+          fontSize: '18px',
+          fontWeight: 500,
+          color: 'var(--gray-150, #444B55)',
+        }}
+      >
+        <div>{duration_in_minutes}분</div>
+        <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
+        <div>{format(new Date(Date.now() + duration_in_minutes), 'HH:mm')} 도착</div>
+        <div style={{ width: '1px', height: '10px', background: 'var(--gray-400, #878E9C)' }} />
+        <div>{distance_in_meters / 1000} km</div>
+      </div>
+      <div style={{ height: '32px' }} />
+      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+        <div style={{ color: 'var(--gray-050, #111)', fontSize: '15px', fontWeight: 700 }}>
+          담긴 상품
         </div>
-        <div style={{ height: '8px' }} />
+        <div style={{ color: 'var(--blue-100, #4A88E5)', fontSize: '15px', fontWeight: 700 }}>
+          {itemsCount}
+        </div>
+      </div>
+      <div style={{ height: '8px' }} />
 
-        <Slider
-          {...{
-            infinite: false,
-            slidesToShow: 1.3,
-            slidesToScroll: 1,
-          }}
-        >
-          {products.map(product => {
-            return (
-              <div key={product.name}>
-                <div
-                  style={{
-                    padding: '12px',
-                    borderRadius: '12px',
-                    border: '1px solid var(--gray-700, #E5E8ED)',
-                    marginRight: '12px',
-                    display: 'flex',
-                    gap: '16px',
-                  }}
-                >
-                  <img
-                    src='https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80'
-                    width={'60px'}
-                    height={'60px'}
-                    style={{ borderRadius: '10px' }}
-                  />
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span
-                      style={{
-                        fontSize: '15px',
-                        fontWeight: 700,
-                        lineHeight: 'normal',
-                      }}
-                    >
-                      {product.storeName}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '14px',
-                        fontWeight: 400,
-                        lineHeight: 'normal',
-                      }}
-                    >
-                      {product.name}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '16px',
-                        fontWeight: 700,
-                        lineHeight: 'normal',
-                      }}
-                    >
-                      {product.price}
-                    </span>
-                  </div>
+      <Slider
+        {...{
+          infinite: false,
+          slidesToShow: 1.3,
+          slidesToScroll: 1,
+        }}
+      >
+        {products.map(product => {
+          return (
+            <div key={product.name}>
+              <div
+                style={{
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--gray-700, #E5E8ED)',
+                  marginRight: '12px',
+                  display: 'flex',
+                  gap: '16px',
+                }}
+              >
+                <img
+                  //TODO: 이미지 경로 변경
+                  src='https://images.unsplash.com/photo-1575936123452-b67c3203c357?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D&w=1000&q=80'
+                  width={'60px'}
+                  height={'60px'}
+                  style={{ borderRadius: '10px' }}
+                />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span
+                    style={{
+                      fontSize: '15px',
+                      fontWeight: 700,
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    {product.storeName}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 400,
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    {product.name}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      lineHeight: 'normal',
+                    }}
+                  >
+                    {product.price}
+                  </span>
                 </div>
               </div>
-            )
-          })}
-        </Slider>
-        <div style={{ height: '32px' }} />
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button
-            type='button'
-            style={{
-              padding: '20px 24px',
-              flex: '1 0 0',
-              borderRadius: '12px',
-              background: 'var(--blue-100, #4A88E5)',
-              color: 'var(--white-900, #FFF)',
-              fontSize: '16px',
-              fontWeight: 700,
-            }}
-          >
-            미리 결제하고 길 안내
-          </button>
-          <button
-            type='button'
-            style={{
-              padding: '20px 24px',
-              borderRadius: '12px',
-              background: 'var(--blue-10015, rgba(74, 136, 229, 0.15))',
-              color: 'var(--blue-300, #2C6AC7)',
-              fontSize: '16px',
-              fontWeight: 700,
-              flexShrink: 0,
-            }}
-          >
-            바로 길 안내
-          </button>
-        </div>
+            </div>
+          )
+        })}
+      </Slider>
+      <div style={{ height: '32px' }} />
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button
+          type='button'
+          style={{
+            padding: '20px 24px',
+            flex: '1 0 0',
+            borderRadius: '12px',
+            background: 'var(--blue-100, #4A88E5)',
+            color: 'var(--white-900, #FFF)',
+            fontSize: '16px',
+            fontWeight: 700,
+          }}
+        >
+          미리 결제하고 길 안내
+        </button>
+        <button
+          type='button'
+          style={{
+            padding: '20px 24px',
+            borderRadius: '12px',
+            background: 'var(--blue-10015, rgba(74, 136, 229, 0.15))',
+            color: 'var(--blue-300, #2C6AC7)',
+            fontSize: '16px',
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          바로 길 안내
+        </button>
       </div>
     </div>
   )
