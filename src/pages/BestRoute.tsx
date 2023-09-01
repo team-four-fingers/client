@@ -100,7 +100,7 @@ export default function BestRoute() {
   const waypointNames = ['출발', ...waypoints.map(point => point.name), '도착']
 
   const openKakaonavi = () => {
-    const waypoint = waypoints.slice(0, 3).map(point => ({
+    const waypoint = waypoints.map(point => ({
       name: point.name,
       x: point.coordinate.x,
       y: point.coordinate.y,
@@ -109,14 +109,14 @@ export default function BestRoute() {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     Kakao.Navi.start({
-      // 시작좌표
-      sX: destination.x,
-      sY: destination.y,
+      // // 시작좌표
+      // sX: 126.946362033068,
+      // sY: 37.5404741779088,
 
       // 도착지
       name: '마포구 일진빌딩',
-      x: origin.x,
-      y: origin.y,
+      x: destination.x,
+      y: destination.y,
 
       // 좌표 타입
       coordType: 'wgs84',
