@@ -17,5 +17,5 @@ export const originState = atom<Coordinate>({
 
 export const destinationState = atom<Coordinate>({
   key: 'destinationState',
-  default: { x: 126.946362033068, y: 37.5404741779088 },
+  default: { x: 127.091838, y: 37.511789 },
 })

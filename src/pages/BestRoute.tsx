@@ -114,7 +114,7 @@ export default function BestRoute() {
       // sY: 37.5404741779088,
 
       // 도착지
-      name: '마포구 일진빌딩',
+      name: '서현역',
       x: destination.x,
       y: destination.y,
 
